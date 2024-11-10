@@ -59,12 +59,12 @@ local function add_query_matches(hl_group, pos, query_text)
     return nil
   end
 
-  local matches = {}
   local wins = vim.api.nvim_tabpage_list_wins(0)
 
   local start_idx = nil
   local end_idx = nil
   local match_positions = {}
+  local match_ids = {}
 
   local subject_text = get_screen_text()
   for _, line_info in ipairs(subject_text) do
@@ -86,13 +86,11 @@ local function add_query_matches(hl_group, pos, query_text)
   end
 
   for _, win_id in ipairs(wins) do
-    for _, match_pos in ipairs(match_positions) do
-      local match_id = vim.fn.matchaddpos(hl_group, { match_pos }, 100, -1, { window = win_id })
-      table.insert(matches, { match_id, win_id })
-    end
+    local match_id = vim.fn.matchaddpos(hl_group, match_positions, 100, -1, { window = win_id })
+    table.insert(match_ids, { match_id, win_id })
   end
 
-  return matches
+  return match_ids
 end
 
 
