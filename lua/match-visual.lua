@@ -1,5 +1,4 @@
 local vim = vim
-local tbl_map = vim.tbl_map
 local tbl_contains = vim.tbl_contains
 
 local fn = vim.fn
