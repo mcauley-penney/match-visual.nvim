@@ -1,11 +1,27 @@
- local _local_1_ = vim local _local_2_ = _local_1_["api"] local nvim_create_autocmd = _local_2_["nvim_create_autocmd"] local nvim_create_augroup = _local_2_["nvim_create_augroup"] local schedule = _local_1_["schedule"]
+local vim_api = vim.api
+local schedule = vim.schedule
+local match_vis = require("match-visual")
 
- local _local_3_ = require("match-visual") local match_visual = _local_3_["match_visual"] local remove_visual_selection = _local_3_["remove_visual_selection"]
+local aucmd = vim_api.nvim_create_autocmd
+local augrp = vim_api.nvim_create_augroup
 
- local group = nvim_create_augroup("MatchVisual", {clear = true})
- nvim_create_autocmd("CursorMoved", {group = group, callback = match_visual})
+local group = augrp("MatchVisual", { clear = true })
 
+aucmd("CursorMoved", {
+  group = group,
+  callback = function()
+    schedule(match_vis.match_visual)
+  end,
+})
 
+aucmd("ModeChanged", {
+  group = group,
+  pattern = "*:[vV]",
+  callback = match_vis.match_visual,
+})
 
- local function _4_() return schedule(match_visual) end nvim_create_autocmd("ModeChanged", {group = group, pattern = "*:[vV]", callback = _4_})
- return nvim_create_autocmd("ModeChanged", {group = group, pattern = "[vV]:*", callback = remove_visual_selection})
+aucmd("ModeChanged", {
+  group = group,
+  pattern = "[vV]:*",
+  callback = match_vis.remove_visual_selection,
+})
