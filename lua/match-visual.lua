@@ -15,20 +15,12 @@ M.opts = {
 
 local visual_matches = {}
 
-local function lines_to_match_string(lines)
+local function normalize_query_text(lines)
   assert(lines ~= nil, "Missing argument 'lines'")
 
-  local escaped_lines = tbl_map(function(line)
-    return fn.escape(line, "\\")
-  end, lines)
+  local text = fn.join(lines, "\\n")
 
-  local text = fn.join(escaped_lines, "\\n")
-
-  if #text ~= 0 then
-    return text
-  else
-    return nil
-  end
+  return #text ~= 0 and text or nil
 end
 
 local function match_in_vselection(pos_tbl, lnum, line_len, start_idx, end_idx)
@@ -52,7 +44,7 @@ end
 
 local function add_query_matches(hl_group, pos, query_text)
   local query_len = #vim.fn.join(query_text, " ")
-  query_text = lines_to_match_string(query_text)
+  query_text = normalize_query_text(query_text)
 
   if not query_text or query_len < M.opts.min_length then
     return nil
@@ -72,7 +64,7 @@ local function add_query_matches(hl_group, pos, query_text)
 
     start_idx = 1
     while true do
-      start_idx, end_idx = line:find(query_text, start_idx)
+      start_idx, end_idx = line:find(query_text, start_idx, true)
 
       if not start_idx then break end
 
