@@ -96,7 +96,7 @@ local function remove_visual_selection()
 end
 
 local function get_visual_pos(mode)
-  local pos_list = fn.getregionpos(fn.getpos('v'), fn.getpos('.'), { type = mode, eol = false })
+  local pos_list = fn.getregionpos(fn.getpos('v'), fn.getpos('.'), { type = mode, eol = true })
 
   local start_pos, end_pos = pos_list[1][1], pos_list[#pos_list][2]
   local start_row, start_col = start_pos[2], start_pos[3]
